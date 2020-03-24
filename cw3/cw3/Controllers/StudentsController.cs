@@ -24,7 +24,7 @@ namespace cw3.Controllers
         public string GetStudents(string orderBy)
         {
             var s = HttpContext.Request;
-            
+
             return "Jan, Anna, Krzysztof sortowanie={orderBy}";
         }
 
@@ -32,11 +32,11 @@ namespace cw3.Controllers
         [HttpGet("{id}")]
         public IActionResult GetStudent(int id)
         {
-            if(id == 1)
+            if (id == 1)
             {
                 return Ok("Jan");
-            }else
-            return NotFound("Student not found");
+            } else
+                return NotFound("Student not found");
         }
 
         //3. cialo zadania
@@ -46,6 +46,20 @@ namespace cw3.Controllers
             student.IndexNumber = $"s{new Random().Next(1, 20000)}";
             //...
             return Ok(student);
+        }
+
+
+        [HttpPut("{id}")]
+        public IActionResult ModifyStudent(Student student)
+        {
+            return Ok("Aktualizacja dokonczona");
+        }
+
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteStudent(Student student)
+        {
+            return Ok("Usuwanie zakonczone");
         }
     }
 }

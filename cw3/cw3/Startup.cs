@@ -29,7 +29,7 @@ namespace cw3
             //Ninject
             //Autofac
             //...
-            services.AddTransient<IDBService, OracleDbService>();
+            services.AddTransient<IDBService, OracleDBService>();
             services.AddControllers();
         }
 
