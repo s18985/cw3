@@ -7,9 +7,9 @@ namespace cw3.Services
     {
         private static IEnumerable<Student> _students = new List<Student>
         {
-            new Student{IdStudent=1, FirstName="Jan", LastName="Kowalski", IndexNumber="s1234"},
-            new Student{IdStudent=2, FirstName="Andrzej", LastName="Malina", IndexNumber="s2345"},
-            new Student{IdStudent=3, FirstName="Monika", LastName="Nowak", IndexNumber="s3456"}
+            new Student{IndexNumber="s1234", FirstName="Jan", LastName="Kowalski" },
+            new Student{IndexNumber="s2345", FirstName="Andrzej", LastName="Malina"},
+            new Student{IndexNumber="s3456", FirstName="Monika", LastName="Nowak"}
         };
 
         public IEnumerable<Student> GetStudents()

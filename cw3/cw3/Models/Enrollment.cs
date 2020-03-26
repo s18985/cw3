@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 
 namespace cw3.Models
 {
-    public class Student
+    public class Enrollment
     {
         public string IndexNumber { get; set; }
-
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
+        public int IdEnrollment { get; set; }
+        public int Semester { get; set; }
+        public string StartDate { get; set; }
     }
 }
