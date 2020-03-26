@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace cw3.Controllers
 {
-    [Route("api/students")]
+    
     [ApiController]
+    [Route("api/students")]
     public class StudentsController : ControllerBase
     {
         private IDBService _dBService;
@@ -21,11 +22,12 @@ namespace cw3.Controllers
 
         //2.QueryString
         [HttpGet]
-        public string GetStudents(string orderBy)
+        public IActionResult GetStudents(string orderBy)
         {
-            var s = HttpContext.Request;
+            //var s = HttpContext.Request; <---surowe dane z zadnia http
+            //return $"Kowalski, Nowak, Malewski sortowanie={orderBy}"; <--- dla zwracanego stringa
 
-            return "Jan, Anna, Krzysztof sortowanie={orderBy}";
+            return Ok(_dBService.GetStudents());
         }
 
         //1.URL segment
@@ -34,8 +36,13 @@ namespace cw3.Controllers
         {
             if (id == 1)
             {
-                return Ok("Jan");
-            } else
+                return Ok("Kowalski");
+            }
+            else if (id == 2)
+            {
+                return Ok("Nowak");
+            }
+            else
                 return NotFound("Student not found");
         }
 
@@ -43,21 +50,23 @@ namespace cw3.Controllers
         [HttpPost]
         public IActionResult CreateStudent(Student student)
         {
+
+            // add to database
+            // generating index number
             student.IndexNumber = $"s{new Random().Next(1, 20000)}";
-            //...
             return Ok(student);
         }
 
 
         [HttpPut("{id}")]
-        public IActionResult ModifyStudent(Student student)
+        public IActionResult ModifyStudent(int id)
         {
             return Ok("Aktualizacja dokonczona");
         }
 
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteStudent(Student student)
+        public IActionResult DeleteStudent(int id)
         {
             return Ok("Usuwanie zakonczone");
         }
