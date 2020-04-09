@@ -13,5 +13,7 @@ namespace cw3.Models
 
         public string LastName { get; set; }
 
+        public DateTime Birthdate { get; set; }
+
     }
 }

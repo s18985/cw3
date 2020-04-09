@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using cw3.DAL;
 using cw3.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,7 @@ namespace cw3
             //Autofac
             //...
             services.AddTransient<IDBService, MockDBService>();
+            services.AddTransient<IStudentsDbService, SqlServerDbService>();
             services.AddControllers();
         }
 
@@ -41,12 +43,15 @@ namespace cw3
             app.UseRouting();
 
             //Doklejal do odpowiedzi naglowek http
+            /*
             app.Use(async (context, c) =>
             {
                 context.Response.Headers.Add("Secret", "1234");
                 await c.Invoke();
             });
-            app.UseMiddleware<CustomMiddleware>();
+            */
+
+            //app.UseMiddleware<CustomMiddleware>();
 
             app.UseAuthorization();
 

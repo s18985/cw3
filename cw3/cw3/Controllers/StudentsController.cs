@@ -79,6 +79,7 @@ namespace cw3.Controllers
                     en.IndexNumber = dr["IndexNumber"].ToString();
                     en.IdEnrollment = (int) dr["IdEnrollment"];
                     en.Semester = (int) dr["Semester"];
+                    en.IdStudy = (int)dr["IdStudy"];
                     en.StartDate = dr["StartDate"].ToString();
                     list2.Add(en);
                 }
