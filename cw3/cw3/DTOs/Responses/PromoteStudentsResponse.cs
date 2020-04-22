@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 
 namespace cw3.DTOs.Responses
 {
-    public class EnrollStudentResponse
+    public class PromoteStudentsResponse
     {
 
-        public string IndexNumber { get; set; }
-        public int IdEnrollment { get; set; }
-        public int Semester { get; set; }
-        public string Studies { get; set; }
-        public DateTime StartDate { get; set; }
 
+        public int IdEnrollment { get; set; }
+
+        public int Semester { get; set; }
+
+        public string Studies { get; set; }
+
+        public DateTime StartDate { get; set; }
     }
 }

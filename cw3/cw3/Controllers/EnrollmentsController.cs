@@ -33,7 +33,7 @@ namespace cw3.Controllers
          
                 if (response != null)
                 {
-               return Ok(response);
+               return Created("",response);
                 }
                 else
                 {
@@ -46,6 +46,29 @@ namespace cw3.Controllers
             }
 
 
+        }
+
+
+        [HttpPost("/api/enrollments/promotions")]
+        public IActionResult PromoteStudents(PromoteStudentsRequest request)
+        {
+            try
+            {
+                var response = _service.PromoteStudents(request);
+
+                if (response != null)
+                {
+                    return Created("",response);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (SqlException exc)
+            {
+                return BadRequest();
+            }
         }
 
     }

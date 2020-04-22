@@ -1,0 +1,55 @@
+create procedure PromoteStudents
+@Studies nvarchar(100),
+@Semester int
+
+as begin
+	set xact_abort on
+	begin tran
+
+	declare @idStud int, @idEnroll int, @nextIdEnroll int, @date date, @nextSemester int
+	
+	select @idStud = (select idStudy from Studies where name = @Studies)
+
+	if @idStud is null
+	begin
+		rollback
+	end
+
+	if not exists (select * from Enrollment where IdStudy = @idStud and Semester = @Semester)
+	begin
+		rollback
+	end
+	else
+	begin
+		select @idEnroll = (select idEnrollment from Enrollment where IdStudy = @idStud and Semester = @Semester)
+	end
+
+	select @nextSemester = @Semester + 1,
+		   @date = (select convert (date, sysdatetime()))
+
+	if not exists (select idenrollment from Enrollment where IdStudy = @idStud and Semester = @nextSemester)
+	begin
+		select @nextIdEnroll = (select max(idenrollment) from Enrollment) + 1
+		insert into Enrollment(IdEnrollment, Semester, IdStudy, StartDate)
+		values (@nextIdEnroll, @nextSemester, @idStud, @date)
+	end
+	else
+	begin
+		select @nextIdEnroll = (select idenrollment from Enrollment where IdStudy = @idStud and Semester = @nextSemester)
+	end
+
+	declare @oldIdEnroll int
+	declare kursor cursor for
+	select idenrollment from student where IdEnrollment = @idEnroll
+	open kursor
+	fetch next from kursor into @oldIdEnroll
+	while @@FETCH_STATUS = 0
+	begin
+		update Student set IdEnrollment = @nextIdEnroll where IdEnrollment = @idEnroll
+		fetch next from kursor into @oldIdEnroll
+	end
+	close kursor
+	deallocate kursor
+
+	commit
+	end

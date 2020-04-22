@@ -11,7 +11,7 @@ namespace cw3.DAL
     {
         EnrollStudentResponse EnrollStudent(EnrollStudentRequest request);
 
-        void PromoteStudents(int semester, string studies);
+        PromoteStudentsResponse PromoteStudents(PromoteStudentsRequest request);
 
 
     }

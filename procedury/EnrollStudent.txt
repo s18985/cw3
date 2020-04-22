@@ -1,0 +1,43 @@
+
+create procedure EnrollStudent 
+@IndexNumber nvarchar(100),
+@FirstName nvarchar(100), 
+@LastName nvarchar(100), 
+@Birthdate date, 
+@Studies nvarchar(100)
+
+as begin
+	set xact_abort on
+	begin tran
+
+	declare @var1 int, @var2 int, @date date
+	
+	if not exists (select IdStudy from studies where name = @Studies)
+	begin
+		rollback
+	end
+	
+	select @var1 = (select IdStudy from studies where name = @Studies)
+	
+	if not exists (select IdEnrollment from enrollment where IdStudy=@var1 and semester=1)
+	begin
+		select @var2 = ((select max(IdEnrollment) from Enrollment)+1),
+		@date = (SELECT CONVERT (date, SYSDATETIME()))
+
+		insert into Enrollment(IdEnrollment, Semester, IdStudy, StartDate)
+		values (@var2, 1, @var1, @date)
+		select @var1 = @var2
+	end
+	
+	if exists (select lastname from student where IndexNumber = @IndexNumber)
+	begin
+		rollback
+	end
+	else
+	begin
+		insert into Student(IndexNumber, FirstName, LastName, BirthDate, IdEnrollment)
+		values (@IndexNumber, @FirstName, @LastName, @Birthdate, @var1)
+	end
+
+	commit
+	end
