@@ -179,5 +179,42 @@ namespace cw3.DAL
 
             }
         }
+
+        public Student GetStudent(string IndexNumer)
+        {
+            const string ConString = "Data Source=db-mssql;Initial Catalog=s18985;Integrated Security=True";
+            var stud = new Student();
+
+            using (var con = new SqlConnection(ConString))
+            using (var com = new SqlCommand())
+            {
+                com.Connection = con;
+
+                con.Open();
+
+                com.CommandText = "select * from Student where IndexNumber = @index";
+                com.Parameters.AddWithValue("index", IndexNumer);
+                var dr = com.ExecuteReader();
+
+                if (!dr.Read())
+                {
+                    return null;
+                }
+                else
+                {
+                    while (dr.Read())
+                    {
+                        stud.IndexNumber = dr["IndexNumber"].ToString();
+                        stud.FirstName = dr["FirstName"].ToString();
+                        stud.LastName = dr["LastName"].ToString();
+                        stud.Birthdate = (DateTime)dr["BirthDate"];
+                    }
+
+                    return stud;
+                }
+                
+            }
+        }
+
     }
 }

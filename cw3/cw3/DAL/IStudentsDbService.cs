@@ -1,5 +1,6 @@
 ﻿using cw3.DTOs.Requests;
 using cw3.DTOs.Responses;
+using cw3.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace cw3.DAL
 
         PromoteStudentsResponse PromoteStudents(PromoteStudentsRequest request);
 
-
+        Student GetStudent(string IndexNumer);
     }
 }
