@@ -43,6 +43,7 @@ namespace cw3.Controllers
                     st.IndexNumber = dr["IndexNumber"].ToString();
                     st.FirstName = dr["FirstName"].ToString();
                     st.LastName = dr["LastName"].ToString();
+                    st.Birthdate = (DateTime) dr["BirthDate"];
                     list.Add(st);
                 }
 

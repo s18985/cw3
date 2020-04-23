@@ -44,73 +44,74 @@ namespace cw3.DAL
                 success = com.ExecuteNonQuery();
                 */
 
-                com.CommandText = "select IdStudy from studies where name = @name";
-                com.Parameters.AddWithValue("name", request.Studies);
+                com.CommandText = "select IdStudy from studies where name = @studies";
+                com.Parameters.AddWithValue("studies", request.Studies);
                 com.Transaction = tran;
-                var dr = com.ExecuteReader();
+                var dr = com.ExecuteScalar();
 
-                if (!dr.Read())
+                if (dr == null)
                 {
                     tran.Rollback();
                     success = false;
                 }
 
-                int idStudy = (int)dr["IdStudy"];
+                int idStudy = (int)dr;
                 int idEnroll;
-
-                com.CommandText = "select * from Enrollment inner join Studies on Enrollment.IdStudy = Studies.IdStudy where semester = 1 and Studies.Name = @name";
+                int idEnrollMax;
+                com.CommandText = "select MAX(IdEnrollment) from Enrollment";
                 com.Transaction = tran;
-                dr = com.ExecuteReader();
+                dr = com.ExecuteScalar();
+                idEnrollMax = (int)dr;
 
-                if (!dr.Read())
+                com.CommandText = "select IdEnrollment from Enrollment where Semester = 1 and IdStudy = @idstudy";
+                com.Parameters.AddWithValue("idstudy", idStudy);
+                com.Transaction = tran;
+                dr = com.ExecuteScalar();
+
+                if (dr == null)
                 {
-                    com.CommandText = "select MAX(IdEnrollment) from Enrollment";
-                    com.Transaction = tran;
-                    dr = com.ExecuteReader();
-                    idEnroll = ((int) dr["idEnrollment"]) + 1;
+                    idEnroll = idEnrollMax + 1;
                     DateTime start = DateTime.Today;
 
                     com.CommandText = "insert into Enrollment(IdEnrollment, Semester, IdStudy, StartDate) values (@idenroll, 1, @idstudy, @date)";
                     com.Parameters.AddWithValue("idenroll", idEnroll);
-                    com.Parameters.AddWithValue("idstudy", idStudy);
                     com.Parameters.AddWithValue("date", start);
                     com.Transaction = tran;
                     com.ExecuteNonQuery();
+                }
+                else
+                {
+                    idEnroll = (int)dr;
                 }
 
                 com.CommandText = "select lastname from student where IndexNumber = @index";
                 com.Parameters.AddWithValue("index", st.IndexNumber);
                 com.Transaction = tran;
-                dr = com.ExecuteReader();
+                dr = com.ExecuteScalar();
 
 
-                if (dr.Read())
+                if (dr != null)
                 {
                     tran.Rollback();
                     success = false;
                 }
 
-                com.CommandText = "select * from Enrollment inner join Studies on Enrollment.IdStudy = Studies.IdStudy where semester = 1 and Studies.Name = @name";
-                idEnroll = (int)dr["idStudy"];
-                com.Transaction = tran;
-                com.ExecuteReader();
-
-                com.CommandText = "insert into Student(IndexNumber, FirstName, LastName, BirthDate, IdEnrollment) values(@index, @fn, @ln, @birth, @idenroll)";
+                com.CommandText = "insert into Student(IndexNumber, FirstName, LastName, BirthDate, IdEnrollment) values(@index, @fn, @ln, @birth, @idenroll2)";
                 com.Parameters.AddWithValue("fn", st.FirstName);
                 com.Parameters.AddWithValue("ln", st.LastName);
                 com.Parameters.AddWithValue("birth", st.Birthdate);
-                com.Parameters.AddWithValue("idenroll", idEnroll);
+                com.Parameters.AddWithValue("idenroll2", idEnroll);
                 com.Transaction = tran;
                 com.ExecuteNonQuery();
-
-                tran.Commit();
-                success = true;
 
                 response.IndexNumber = st.IndexNumber;
                 response.IdEnrollment = idEnroll;
                 response.Semester = 1;
                 response.Studies = request.Studies;
                 response.StartDate = date;
+
+                tran.Commit();
+                success = true;
 
             }
             if (success)
