@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using cw3.DAL;
+using cw3.DTOs.Requests;
 using cw3.Models;
 using cw3.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace cw3.Controllers
 {
@@ -14,12 +21,17 @@ namespace cw3.Controllers
     [Route("api/students")]
     public class StudentsController : ControllerBase
     {
+        public IConfiguration Configuration { get; set; }
+
         private IDBService _dBService;
+        private IStudentsDbService _SqlService;
         private const string ConString = "Data Source=db-mssql;Initial Catalog=s18985;Integrated Security=True";
 
-        public StudentsController(IDBService service)
+        public StudentsController(IDBService DbService, IConfiguration configuration, IStudentsDbService SqlService)
         {
-            _dBService = service;
+            _dBService = DbService;
+            Configuration = configuration;
+            _SqlService = SqlService;
         }
 
         //2.QueryString
@@ -109,6 +121,7 @@ namespace cw3.Controllers
         */
 
         //3. cialo zadania
+        /*
         [HttpPost]
         public IActionResult CreateStudent(Student student)
         {
@@ -118,6 +131,7 @@ namespace cw3.Controllers
             student.IndexNumber = $"s{new Random().Next(1, 20000)}";
             return Ok(student);
         }
+        */
         
 
         [HttpPut("{id}")]
@@ -131,6 +145,53 @@ namespace cw3.Controllers
         public IActionResult DeleteStudent(int id)
         {
             return Ok("Usuwanie zakonczone");
+        }
+
+        [HttpPost]
+        public IActionResult Login(LoginRequest request)
+        {
+            try
+            {
+                var response = _SqlService.Login(request);
+
+                if (response != null)
+                {
+                    var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, response.Login),
+                new Claim(ClaimTypes.Role, "student")
+            };
+
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]));
+                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                    var token = new JwtSecurityToken
+                    (
+                        //issuer: "Gakko",
+                        //audience: "Students",
+                        claims: claims,
+                        expires: DateTime.Now.AddMinutes(10),
+                        signingCredentials: creds
+                    );
+
+                    return Ok(new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token),
+                        RefreshToken = Guid.NewGuid()
+                    });
+
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception exc)
+            {
+                return Unauthorized();
+            }
+
+            
         }
     }
 }

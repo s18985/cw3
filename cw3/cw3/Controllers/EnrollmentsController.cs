@@ -7,6 +7,7 @@ using cw3.DAL;
 using cw3.DTOs.Requests;
 using cw3.DTOs.Responses;
 using cw3.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace cw3.Controllers
 {
     [Route("api/enrollments")]
     [ApiController]
+
     public class EnrollmentsController : ControllerBase
     {
         private IStudentsDbService _service;
@@ -24,6 +26,7 @@ namespace cw3.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "employee")]
         public IActionResult EnrollStudent(EnrollStudentRequest request)
         {
 
@@ -50,6 +53,7 @@ namespace cw3.Controllers
 
 
         [HttpPost("/api/enrollments/promotions")]
+        [Authorize(Roles = "employee")]
         public IActionResult PromoteStudents(PromoteStudentsRequest request)
         {
             try

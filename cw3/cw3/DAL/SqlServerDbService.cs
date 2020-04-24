@@ -216,5 +216,47 @@ namespace cw3.DAL
             }
         }
 
+
+        public LoginResponse Login(LoginRequest request)
+        {
+            const string ConString = "Data Source=db-mssql;Initial Catalog=s18985;Integrated Security=True";
+            string Login = request.Login;
+            string Password = request.Password;
+            LoginResponse response = new LoginResponse();
+
+            using (var con = new SqlConnection(ConString))
+            using (var com = new SqlCommand())
+            {
+                com.Connection = con;
+                con.Open();
+
+                com.CommandText = "select * from student where IndexNumber = @index;";
+                com.Parameters.AddWithValue("index", request.Login);
+                var dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+                    Login = dr["IndexNumber"].ToString();
+                    Password = dr["Password"].ToString();
+                }
+
+            }
+
+            if (request.Login == Login && request.Password == Password)
+            {
+                response.Login = Login;
+                response.Password = Password;
+
+                return response;
+            }
+            else
+            {
+                return null;
+            }
+
+
+
+                
+        }
+
     }
 }

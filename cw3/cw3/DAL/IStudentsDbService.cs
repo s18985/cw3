@@ -15,5 +15,7 @@ namespace cw3.DAL
         PromoteStudentsResponse PromoteStudents(PromoteStudentsRequest request);
 
         Student GetStudent(string IndexNumer);
+
+        LoginResponse Login(LoginRequest request);
     }
 }
