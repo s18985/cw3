@@ -10,6 +10,7 @@ using cw3.DAL;
 using cw3.DTOs.Requests;
 using cw3.Models;
 using cw3.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -19,17 +20,18 @@ namespace cw3.Controllers
     
     [ApiController]
     [Route("api/students")]
+    [Authorize]
     public class StudentsController : ControllerBase
     {
         public IConfiguration Configuration { get; set; }
 
-        private IDBService _dBService;
+        //private IDBService _dBService;
         private IStudentsDbService _SqlService;
         private const string ConString = "Data Source=db-mssql;Initial Catalog=s18985;Integrated Security=True";
 
-        public StudentsController(IDBService DbService, IConfiguration configuration, IStudentsDbService SqlService)
+        public StudentsController(IConfiguration configuration, IStudentsDbService SqlService)
         {
-            _dBService = DbService;
+            //_dBService = DbService;
             Configuration = configuration;
             _SqlService = SqlService;
         }

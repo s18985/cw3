@@ -50,7 +50,8 @@ namespace cw3
             //Ninject
             //Autofac
             //...
-            services.AddTransient<IDBService, MockDBService>();
+
+            //services.AddTransient<IDBService, MockDBService>();
             services.AddScoped<IStudentsDbService, SqlServerDbService>();
             services.AddControllers();
         }
@@ -105,6 +106,7 @@ namespace cw3
 
             //app.UseMiddleware<CustomMiddleware>();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
